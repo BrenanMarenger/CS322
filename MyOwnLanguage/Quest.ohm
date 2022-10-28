@@ -1,0 +1,158 @@
+Questo { 
+ 
+  Quest
+    = "quest" Identifier LootSection? SpellsSection? StorySection
+
+  LootSection
+    = "loot" LootDeclaration+ "!"
+
+  SpellsSection
+    = "spells" Spell+ "!"
+
+  StorySection
+    = "story" (Statement | ProcedureSpell | FunctionSpell)* "!"
+
+  LootDeclaration
+    = Identifier "isA" Type
+    | Identifier "isAn" Type
+
+  Spell
+    = ProcedureSpell
+    | FunctionSpell
+    | DeclareSpell
+
+  ProcedureSpell
+    = Identifier (ArgumentList)?
+    
+  FunctionSpell 
+    = Identifier (ArgumentList)?
+    
+   DeclareSpell
+    = ReservedWord Identifier ParameterList? ReturnType? SpellBody? "!"
+    
+  ReturnType
+   = "isA"
+   | "isAn"
+   
+  SpellBody
+   = (LootSection | Statement | ReservedWord | Expression | Spell)*
+   
+  ParameterList
+   = "~" (LootDeclaration ("," LootDeclaration)*)? "~"
+   
+  Statement
+    = AssignmentStatement
+    | WhileStatement
+    | IOStatement
+    | CondStatement
+    | SpellAssignmentStatement
+   
+  CondStatement
+   = (ReservedWord Expression ReservedWord  Statement*) (ReservedWord (ReservedWord Expression ReservedWord)? Statement*)? ReservedWord
+   
+   SpellAssignmentStatement
+    = Expression ArgumentList "->" Identifier
+  
+  WhileStatement
+    = "while" Expression "do" Statement* "endwhile"
+    
+  IOStatement
+    = ScribeStatement
+    | "eol"
+    
+  ScribeStatement
+    = "scribe" Expression
+    
+  AssignmentStatement
+    = Expression "->" Identifier
+    
+  Expression
+    = LogicalExpression
+    | RelationalExpression
+    | MathExpression
+    | UnaryLogicalExpression
+    | GroupingExpression
+    | VariableReference
+    | Literal
+
+  GroupingExpression
+    = "(" Expression ")"
+    
+  LogicalExpression
+    = Expression "and" Expression
+    | Expression "or" Expression
+    
+   RelationalExpression
+   = Expression ">" Expression
+   | Expression "<" Expression
+   | Expression "=" Expression
+    
+   MathExpression
+   = Expression "*" Expression
+   | Expression "/" Expression
+   | Expression "rem" Expression
+   | Expression "+" Expression
+   | Expression "-" Expression
+   
+  UnaryLogicalExpression
+    = "not" Expression
+    
+  Type
+    = "integer"
+    | "string"
+    | "boole"
+
+  Literal
+    = StringLiteral
+    | BooleanLiteral
+    | NumericLiteral
+
+  BooleanLiteral
+    = "true"
+    | "false"
+
+  StringLiteral
+    = quotedString
+
+  NumericLiteral
+    = number
+
+  ArgumentList
+    = "~" (Expression ("," Expression)*)? "~"
+
+  VariableReference
+    = Identifier
+
+  Identifier
+    = ~ReservedWord word
+
+  ReservedWord
+    = "while"
+    | "do"
+    | "if"
+    | "then"
+    | "else"
+    | "loot"
+    | "spell"
+    | "spells"
+    | "endif"
+    | "not"
+    | "scribe"
+    | "eol"
+    | "rem"
+    | "and"
+    | "or"
+    | "not"
+    | "true"
+    | "false"
+
+
+  word  (an identifier)
+    = letter alnum*
+
+  number  (a number)
+    = digit+             -- whole
+
+  quotedString
+    = "'" (~ "'" any | "''")* "'"
+}
